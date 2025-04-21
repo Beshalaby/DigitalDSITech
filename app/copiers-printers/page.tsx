@@ -21,16 +21,19 @@ const printerCategories = [
     ],
     options: [
       {
-        title: "Workgroup MFP",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/workgroup-mfp-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub C650i",
+        image: "/images/konica printers/multifunction/bizhub_C650i_Right.png",
+        description: "High-performance color multifunction printer with advanced security features and cloud integration capabilities."
       },
       {
-        title: "Enterprise MFP",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/enterprise-mfp-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub C550i",
+        image: "/images/konica printers/multifunction/bizhub_C550i_Right.png",
+        description: "Versatile color multifunction printer offering exceptional print quality and efficient workflow solutions."
       },
       {
-        title: "Production MFP",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/production-mfp-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub 4020i",
+        image: "/images/konica printers/multifunction/bizhub_4020i_525x450.png",
+        description: "Compact and efficient monochrome multifunction printer perfect for small to medium workgroups."
       }
     ]
   },
@@ -49,16 +52,19 @@ const printerCategories = [
     ],
     options: [
       {
-        title: "Laser Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/laser-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub 5020i",
+        image: "/images/konica printers/single_function/bizhub-5020i-525x450.png",
+        description: "High-speed monochrome printer with advanced security features and network capabilities."
       },
       {
-        title: "Inkjet Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/inkjet-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub 5000i",
+        image: "/images/konica printers/single_function/bizhub_5000i_525x450.png",
+        description: "Reliable monochrome printer offering exceptional print quality and cost efficiency."
       },
       {
-        title: "Dot Matrix Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dot-matrix-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "bizhub 4000i",
+        image: "/images/konica printers/single_function/bizhub_4000i_525x450.png",
+        description: "Compact and efficient monochrome printer ideal for small office environments."
       }
     ]
   },
@@ -77,16 +83,19 @@ const printerCategories = [
     ],
     options: [
       {
-        title: "CAD Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cad-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "KIP 900 Series",
+        image: "/images/konica printers/kip/KIP-900 Series.png",
+        description: "High-performance wide format printer series offering exceptional print quality and versatility for large format applications."
       },
       {
-        title: "Poster Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/poster-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "KIP 790",
+        image: "/images/konica printers/kip/KIP-790.png",
+        description: "Advanced wide format printer with superior color accuracy and high-speed printing capabilities."
       },
       {
-        title: "Banner Printers",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/banner-printer-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+        title: "KIP 7572G-10D",
+        image: "/images/konica printers/kip/KIP-7572G-10D.png",
+        description: "Professional-grade wide format printer designed for high-volume production and precise color reproduction."
       }
     ]
   }
@@ -94,9 +103,50 @@ const printerCategories = [
 
 export default function CopiersPrintersPage() {
   const [openCategory, setOpenCategory] = useState<string | null>(null)
+  const [selectedPrinter, setSelectedPrinter] = useState<{title: string, image: string, description: string} | null>(null)
 
   return (
     <div className="min-h-screen bg-[#090A11]">
+      {/* Modal */}
+      {selectedPrinter && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedPrinter(null)}
+        >
+          <div className="relative max-w-5xl w-full bg-[#1A1B23] rounded-lg p-8">
+            <button
+              onClick={() => setSelectedPrinter(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+                <Image
+                  src={selectedPrinter.image}
+                  alt={selectedPrinter.title}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex flex-col justify-center">
+                <h3 className="text-3xl font-bold text-[#e9eae3] mb-4">{selectedPrinter.title}</h3>
+                <p className="text-gray-300 text-lg leading-relaxed">{selectedPrinter.description}</p>
+                <div className="mt-6">
+                  <Link href="/request-quote">
+                    <Button className="bg-blue-600 text-white hover:bg-blue-700 px-8 py-4 text-lg">
+                      Request a Quote
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx global>{`
         @keyframes fadeIn {
           from {
@@ -110,15 +160,15 @@ export default function CopiersPrintersPage() {
         }
         @keyframes springExpand {
           0% {
-            transform: scale(0.95);
             opacity: 0;
+            transform: scale(0.95);
           }
           50% {
-            transform: scale(1.02);
+            transform: scale(1.05);
           }
           100% {
-            transform: scale(1);
             opacity: 1;
+            transform: scale(1);
           }
         }
         .animate-fadeIn {
@@ -131,6 +181,7 @@ export default function CopiersPrintersPage() {
           animation-delay: 0.2s;
         }
         .animate-spring-expand {
+          opacity: 0;
           animation: springExpand 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         .card-hover {
@@ -153,6 +204,21 @@ export default function CopiersPrintersPage() {
         }
         .spring-button:active {
           transform: scale(0.95);
+        }
+        .printer-option {
+          transition: background-color 0.2s ease;
+          background-color: transparent;
+        }
+        .printer-option:hover {
+          background-color: rgba(59, 130, 246, 0.1);
+        }
+        .printer-option-text {
+          color: #e9eae3;
+          transition: none;
+        }
+        .printer-option {
+          transform-origin: center;
+          will-change: transform, opacity;
         }
       `}</style>
 
@@ -210,14 +276,12 @@ export default function CopiersPrintersPage() {
                   {openCategory === category.title ? (
                     <>
                       <h3 className="text-2xl font-bold text-[#e9eae3] mb-4 animate-spring-expand">{category.title}</h3>
-                      <div className="grid grid-cols-1 gap-4 flex-grow animate-spring-expand" style={{ animationDelay: '0.1s' }}>
+                      <div className="grid grid-cols-1 gap-4 flex-grow animate-spring-expand">
                         {category.options.map((option, optionIndex) => (
-                          <Link
+                          <div
                             key={optionIndex}
-                            href={`/copiers-printers/${category.title.toLowerCase().replace(/\s+/g, '-')}/${option.title.toLowerCase().replace(/\s+/g, '-')}`}
-                            className="flex items-center gap-4 p-4 rounded-md hover:bg-blue-500/10 transition-colors border border-gray-800 animate-spring-expand"
-                            style={{ animationDelay: `${optionIndex * 0.1 + 0.2}s` }}
-                            onClick={() => setOpenCategory(null)}
+                            className="flex items-center gap-4 p-4 rounded-md printer-option border border-gray-800 animate-spring-expand cursor-pointer"
+                            onClick={() => setSelectedPrinter(option)}
                           >
                             <div className="w-20 h-20 relative rounded-md overflow-hidden">
                               <Image
@@ -227,8 +291,8 @@ export default function CopiersPrintersPage() {
                                 className="object-cover"
                               />
                             </div>
-                            <span className="text-[#e9eae3] font-medium text-lg">{option.title}</span>
-                          </Link>
+                            <span className="printer-option-text font-medium text-lg">{option.title}</span>
+                          </div>
                         ))}
                       </div>
                       <div className="mt-8 animate-spring-expand" style={{ animationDelay: '0.4s' }}>

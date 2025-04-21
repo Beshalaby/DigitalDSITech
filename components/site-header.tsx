@@ -27,10 +27,10 @@ export function SiteHeader() {
 
   return (
     <header 
-      className="sticky top-0 z-50 w-full bg-transparent backdrop-blur-sm"
+      className="sticky top-0 z-[100] w-full bg-transparent"
     >
-      <div className="container flex h-14 items-center justify-between">
-        <Link href="/" className="flex-shrink-0">
+      <div className="container flex h-14 items-center justify-between relative">
+        <Link href="/" className="flex-shrink-0 relative z-[101]">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dsi-logo-horizontal-50aca6ef456c52a6c1fd9182624df141-CmZ0xbu4VmGpgHdSxsF7ZDbJhOkG2W.png"
             alt="Digital DSI Logo"
@@ -57,9 +57,25 @@ export function SiteHeader() {
           <Link
             href="/tech-team-solutions" 
             className="inline-flex items-center text-sm font-medium text-white/90 hover:text-white transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             IT SOLUTIONS
-            <span className="ml-1 text-xs opacity-70">↗</span>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="ml-1 h-3 w-3 opacity-70"
+            >
+              <path d="M7 17L17 7"></path>
+              <path d="M7 7h10v10"></path>
+            </svg>
           </Link>
           <Link 
             href="/about" 
@@ -93,7 +109,7 @@ export function SiteHeader() {
         <button
           id="menu-button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden text-white/90 hover:text-white transition-colors"
+          className="lg:hidden text-white/90 hover:text-white transition-colors relative z-[102]"
         >
           {isMobileMenuOpen ? (
             <X className="h-6 w-6" />
@@ -106,11 +122,11 @@ export function SiteHeader() {
       {/* Mobile Menu */}
       <div
         id="mobile-menu"
-        className={`fixed inset-y-0 right-0 w-64 bg-black border-l border-gray-800 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed inset-y-0 right-0 w-64 bg-black border-l border-gray-800 transform transition-transform duration-300 ease-in-out lg:hidden z-[102] ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex flex-col h-full p-6">
+        <div className="flex flex-col h-full p-6 overflow-y-auto">
           <div className="flex-1 space-y-6">
             <Link 
               href="/?skipIntro=true" 
@@ -128,11 +144,27 @@ export function SiteHeader() {
             </Link>
             <Link
               href="/tech-team-solutions" 
-              className="block text-sm font-medium text-white/90 hover:text-white transition-colors"
+              className="flex items-center text-sm font-medium text-white/90 hover:text-white transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               IT SOLUTIONS
-              <span className="ml-1 text-xs opacity-70">↗</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="14" 
+                height="14" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="ml-1 h-3 w-3 opacity-70"
+              >
+                <path d="M7 17L17 7"></path>
+                <path d="M7 7h10v10"></path>
+              </svg>
             </Link>
             <Link 
               href="/about" 
@@ -168,7 +200,7 @@ export function SiteHeader() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 lg:hidden z-[101]"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

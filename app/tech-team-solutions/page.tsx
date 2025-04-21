@@ -7,14 +7,20 @@ export default function TechTeamSolutions() {
   return (
     <div className="min-h-screen bg-[#090A11]">
       {/* Hero Section with Unique Design */}
-      <section className="relative -mt-14 pt-48 overflow-hidden">
+      <section className="relative -mt-14 pt-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-900/20 to-transparent z-0"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.15)_0%,transparent_70%)] z-0"></div>
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(9,10,17,0.8)_100%)] z-0"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center px-4 py-2 bg-red-500/10 rounded-full mb-8">
-              <span className="text-red-400 text-sm font-medium">TechTeam Solutions</span>
+            <div className="inline-flex items-center justify-center mb-16">
+              <Image
+                src="/images/tts-logo-WHITE.png"
+                alt="TechTeam Solutions Logo"
+                width={600}
+                height={150}
+                className="h-40 w-auto"
+              />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="text-[#e1e1e1]">Enterprise IT </span>
@@ -36,6 +42,8 @@ export default function TechTeamSolutions() {
             </div>
           </div>
         </div>
+        {/* Glowing line separator */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-70 shadow-[0_0_15px_rgba(239,68,68,0.5)]"></div>
       </section>
 
       {/* Services Grid with Unique Layout */}
@@ -233,7 +241,7 @@ export default function TechTeamSolutions() {
             <h2 className="text-4xl font-bold mb-6">
               <span className="text-[#e1e1e1]">Why Choose </span>
               <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-400 text-transparent bg-clip-text drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
-                TechTeam Solutions
+                Tech Team Solutions
               </span>
             </h2>
             <p className="text-xl text-gray-300">
@@ -243,11 +251,12 @@ export default function TechTeamSolutions() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "24/7 Support",
-                description: "Round-the-clock technical support for your business needs",
+                title: "Comprehensive Maintenance",
+                description: "Minimize downtime and reduce long-term IT costs with our comprehensive maintenance services",
                 icon: (
                   <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 )
               },
@@ -278,6 +287,48 @@ export default function TechTeamSolutions() {
                 <p className="text-gray-400">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TechTeam Printers Section */}
+      <section className="py-24 relative bg-[#0F1015]">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-4xl font-bold mb-6">
+              <span className="text-[#e1e1e1]">Enterprise </span>
+              <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-400 text-transparent bg-clip-text drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
+                Print Solutions
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300">
+              Discover our comprehensive range of enterprise-grade printers and multifunction devices.
+            </p>
+          </div>
+          
+          {/* Printer Catalog Card */}
+          <div className="max-w-3xl mx-auto">
+            <div className="group relative bg-[#1A1B23] rounded-xl overflow-hidden border border-gray-800 hover:border-red-500/30 transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="p-8 relative">
+                <div className="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-[#e9eae3] mb-4">Printer Catalog</h3>
+                <p className="text-gray-400 mb-6">
+                  Browse our selection of high-performance enterprise printers and multifunction devices. Find the perfect printing solution for your business needs.
+                </p>
+                <Link 
+                  href="/tech-team-printers" 
+                  className="inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  View Printer Catalog
+                  <span className="ml-2">→</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>

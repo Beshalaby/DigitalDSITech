@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { JobApplicationModal } from "@/components/job-application-modal"
 
 const jobPositions = [
   {
@@ -32,6 +33,8 @@ const jobPositions = [
 ]
 
 export default function CareersPage() {
+  const [selectedPosition, setSelectedPosition] = useState<string | null>(null)
+
   useEffect(() => {
     const scrollRevealElements = document.querySelectorAll('.scroll-reveal')
     
@@ -114,18 +117,18 @@ export default function CareersPage() {
       `}</style>
 
       {/* Hero Section */}
-      <section className="relative -mt-14 pt-48 overflow-hidden">
+      <section className="relative -mt-14 pt-56 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent z-0"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)] z-0"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-8 animate-slideInLeft">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-10 animate-slideInLeft">
               <span className="text-[#e1e1e1]">Join Our </span>
               <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-transparent bg-clip-text drop-shadow-[0_0_8px_rgba(37,99,235,0.5)]">
                 Growing Team
               </span>
             </h1>
-            <p className="text-[#e9eae3] text-xl animate-slideInRight">
+            <p className="text-[#e9eae3] text-xl md:text-2xl animate-slideInRight">
               Be part of a dynamic team that's shaping the future of printing technology. We're looking for talented individuals who are passionate about innovation and customer success.
             </p>
           </div>
@@ -151,11 +154,12 @@ export default function CareersPage() {
                       <span>{position.location}</span>
                     </div>
                   </div>
-                  <Link href={`/careers/${position.title.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <Button className="mt-4 md:mt-0 bg-blue-600 text-white hover:bg-blue-700 px-8 py-6 text-lg">
-                      Apply Now
-                    </Button>
-                  </Link>
+                  <Button 
+                    onClick={() => setSelectedPosition(position.title)}
+                    className="mt-4 md:mt-0 bg-blue-600 text-white hover:bg-blue-700 px-8 py-6 text-lg"
+                  >
+                    Apply Now
+                  </Button>
                 </div>
                 <p className="text-gray-400 mb-6">{position.description}</p>
                 <div>
@@ -174,6 +178,13 @@ export default function CareersPage() {
           </div>
         </div>
       </section>
+
+      {/* Job Application Modal */}
+      <JobApplicationModal
+        position={selectedPosition || ""}
+        isOpen={!!selectedPosition}
+        onClose={() => setSelectedPosition(null)}
+      />
     </div>
   )
 }

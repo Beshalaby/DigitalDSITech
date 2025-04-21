@@ -129,9 +129,82 @@ export default function Page() {
 
   // Prevent default scroll behavior for touch events
   const preventScroll = (e: TouchEvent) => {
-    if (!initialZoomComplete) {
+    // Prevent scroll only when zoom animation is active
+    if (!initialZoomComplete) { 
       e.preventDefault();
     }
+  };
+
+  // Handle touch events for mobile zoom
+  const handleTouchStart = (e: TouchEvent) => {
+    // Only attach listeners if zoom is not complete OR if touch starts at the very top
+    if (initialZoomComplete && window.scrollY > 0) {
+      return; // Allow normal scrolling if already zoomed and not at the top
+    }
+
+    const startY = e.touches[0].clientY;
+    // Capture the zoom level *at the start* of the touch interaction
+    const initialZoomLevel = zoomLevelRef.current;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      // Prevent scrolling the page while zooming
+      if (!initialZoomComplete) {
+        e.preventDefault();
+      }
+
+      const currentY = e.touches[0].clientY;
+      const deltaY = startY - currentY; // Positive deltaY = swipe up, Negative deltaY = swipe down
+
+      // Adjusted sensitivity for touch
+      const zoomIncrement = deltaY * 0.002;
+
+      // Check if we should INITIATE zoom-out (scrolling up when fully zoomed and at the top)
+      // deltaY < 0 corresponds to swiping down on the screen (scrolling content up)
+      if (initialZoomComplete && window.scrollY === 0 && deltaY < 0) {
+        // Reset state to re-enable zoom interaction and lock scroll
+        setIsFullyZoomed(false);
+        setInitialZoomComplete(false);
+        document.body.style.overflow = 'hidden';
+        document.body.classList.remove('content-visible');
+        // Prevent default page scroll now that zoom interaction is active again
+        e.preventDefault();
+        // Don't return; allow zoom level to decrease below
+      }
+
+      // Update zoom level based on touch movement only when zoom interaction is active
+      // This prevents interference with normal page scrolling when fully zoomed
+      if (!initialZoomComplete) {
+        zoomLevelRef.current = Math.max(0, Math.min(1, initialZoomLevel + zoomIncrement));
+
+        // Apply visual changes based on the updated zoom level
+        setScrollProgress(zoomLevelRef.current);
+        setSmoothScrollProgress(zoomLevelRef.current); // Assuming direct mapping is desired
+
+        // Check if zoom-in is complete
+        if (zoomLevelRef.current >= 0.5 && !isFullyZoomed) {
+          setIsFullyZoomed(true);
+          setTimeout(() => {
+            setInitialZoomComplete(true);
+            document.body.style.overflow = ''; // Unlock scroll
+            document.body.classList.add('content-visible');
+          }, 50);
+        }
+        // Update isFullyZoomed state if zooming out below the threshold
+        else if (zoomLevelRef.current < 0.5 && isFullyZoomed) {
+          setIsFullyZoomed(false);
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    // Add listeners
+    // passive: false is needed because we call preventDefault inside handleTouchMove
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd);
   };
 
   useEffect(() => {
@@ -203,6 +276,11 @@ export default function Page() {
   // Handle wheel events to control zoom
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      // Skip zoom effect on mobile
+      if (window.innerWidth <= 768) {
+        return;
+      }
+
       const currentTime = Date.now();
       lastWheelTimeRef.current = currentTime;
       
@@ -234,8 +312,8 @@ export default function Page() {
       
       e.preventDefault();
       
-      // Increased zoom speed - 5x more sensitive
-      const zoomIncrement = e.deltaY > 0 ? 0.05 : -0.05;
+      // Increased zoom speed - more sensitive
+      const zoomIncrement = e.deltaY > 0 ? 0.07 : -0.07;
       
       // Update zoom level directly without smoothing or animation
       zoomLevelRef.current = Math.max(0, Math.min(1, zoomLevelRef.current + zoomIncrement));
@@ -271,8 +349,9 @@ export default function Page() {
     // Add event listeners
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchmove', preventScroll, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
     
-    // Enable scrolling if zoom is complete
+    // Control body scrolling based ONLY on zoom state
     if (initialZoomComplete) {
       document.body.style.overflow = '';
     } else {
@@ -284,6 +363,7 @@ export default function Page() {
         window.removeEventListener('wheel', wheelEventRef.current);
       }
       window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('touchstart', handleTouchStart);
       document.body.style.overflow = '';
     };
   }, [isLoading, isFullyZoomed, initialZoomComplete]);
@@ -380,7 +460,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-[#090A11]">
-      {/* Add loading overlay */}
+      {/* Add loading overlay*/}
       {isNavigating && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -401,49 +481,6 @@ export default function Page() {
         }
         .glow-effect {
           box-shadow: 0 0 10px rgba(233, 234, 227, 0.5), 0 0 20px rgba(233, 234, 227, 0.3);
-        }
-        @keyframes scanline {
-          0% {
-            transform: translateY(-100%);
-          }
-          100% {
-            transform: translateY(100%);
-          }
-        }
-        .retro-screen::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.15),
-            rgba(0, 0, 0, 0.15) 1px,
-            transparent 1px,
-            transparent 2px
-          );
-          pointer-events: none;
-        }
-        .retro-screen::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 100%;
-          background: linear-gradient(
-            rgba(18, 16, 16, 0) 50%,
-            rgba(0, 0, 0, 0.25) 50%
-          );
-          background-size: 100% 4px;
-          animation: scanline 10s linear infinite;
-          pointer-events: none;
-        }
-        .retro-text {
-          text-shadow: 0.2rem 0.2rem 0.2rem rgba(233, 234, 227, 0.4);
-          animation: textflicker 0.5s infinite;
         }
         @keyframes textflicker {
           0% { 
@@ -467,235 +504,9 @@ export default function Page() {
             opacity: 1;
           }
         }
-        .glitch {
-          animation: glitch-skew 3s infinite linear alternate-reverse;
-        }
-        .glitch::before,
-        .glitch::after {
-          content: attr(data-text);
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-        .glitch::before {
-          left: 2px;
-          text-shadow: -2px 0 #ff00c1;
-          clip: rect(44px, 450px, 56px, 0);
-          animation: glitch-anim 8s infinite linear alternate-reverse;
-        }
-        .glitch::after {
-          left: -2px;
-          text-shadow: -2px 2px #00fff9, 2px 2px #ff00c1;
-          animation: glitch-anim2 4s infinite linear alternate-reverse;
-        }
-        @keyframes glitch-anim {
-          0% {
-            clip: rect(10px, 9999px, 82px, 0);
-            transform: skew(0.3deg);
-          }
-          5% {
-            clip: rect(89px, 9999px, 90px, 0);
-            transform: skew(0.78deg);
-          }
-          10% {
-            clip: rect(74px, 9999px, 71px, 0);
-            transform: skew(0.25deg);
-          }
-          15% {
-            clip: rect(28px, 9999px, 84px, 0);
-            transform: skew(0.04deg);
-          }
-          20% {
-            clip: rect(67px, 9999px, 98px, 0);
-            transform: skew(0.05deg);
-          }
-          25% {
-            clip: rect(100px, 9999px, 2px, 0);
-            transform: skew(0.39deg);
-          }
-          30% {
-            clip: rect(53px, 9999px, 6px, 0);
-            transform: skew(0.01deg);
-          }
-          35% {
-            clip: rect(69px, 9999px, 32px, 0);
-            transform: skew(0.16deg);
-          }
-          40% {
-            clip: rect(61px, 9999px, 62px, 0);
-            transform: skew(0.4deg);
-          }
-          45% {
-            clip: rect(60px, 9999px, 87px, 0);
-            transform: skew(0.61deg);
-          }
-          50% {
-            clip: rect(15px, 9999px, 46px, 0);
-            transform: skew(0.11deg);
-          }
-          55% {
-            clip: rect(83px, 9999px, 32px, 0);
-            transform: skew(0.07deg);
-          }
-          60% {
-            clip: rect(59px, 9999px, 93px, 0);
-            transform: skew(0.8deg);
-          }
-          65% {
-            clip: rect(69px, 9999px, 8px, 0);
-            transform: skew(0.3deg);
-          }
-          70% {
-            clip: rect(85px, 9999px, 75px, 0);
-            transform: skew(0.76deg);
-          }
-          75% {
-            clip: rect(68px, 9999px, 89px, 0);
-            transform: skew(0.65deg);
-          }
-          80% {
-            clip: rect(51px, 9999px, 46px, 0);
-            transform: skew(0.2deg);
-          }
-          85% {
-            clip: rect(46px, 9999px, 78px, 0);
-            transform: skew(0.43deg);
-          }
-          90% {
-            clip: rect(45px, 9999px, 11px, 0);
-            transform: skew(0.02deg);
-          }
-          95% {
-            clip: rect(31px, 9999px, 48px, 0);
-            transform: skew(0.48deg);
-          }
-          100% {
-            clip: rect(16px, 9999px, 72px, 0);
-            transform: skew(0.15deg);
-          }
-        }
-        @keyframes glitch-anim2 {
-          0% {
-            clip: rect(65px, 9999px, 99px, 0);
-            transform: skew(0.02deg);
-          }
-          5% {
-            clip: rect(86px, 9999px, 39px, 0);
-            transform: skew(0.05deg);
-          }
-          10% {
-            clip: rect(93px, 9999px, 74px, 0);
-            transform: skew(0.25deg);
-          }
-          15% {
-            clip: rect(19px, 9999px, 67px, 0);
-            transform: skew(0.38deg);
-          }
-          20% {
-            clip: rect(31px, 9999px, 21px, 0);
-            transform: skew(0.33deg);
-          }
-          25% {
-            clip: rect(38px, 9999px, 20px, 0);
-            transform: skew(0.63deg);
-          }
-          30% {
-            clip: rect(94px, 9999px, 4px, 0);
-            transform: skew(0.39deg);
-          }
-          35% {
-            clip: rect(11px, 9999px, 25px, 0);
-            transform: skew(0.01deg);
-          }
-          40% {
-            clip: rect(0px, 9999px, 37px, 0);
-            transform: skew(0.63deg);
-          }
-          45% {
-            clip: rect(40px, 9999px, 98px, 0);
-            transform: skew(0.57deg);
-          }
-          50% {
-            clip: rect(23px, 9999px, 5px, 0);
-            transform: skew(0.75deg);
-          }
-          55% {
-            clip: rect(23px, 9999px, 31px, 0);
-            transform: skew(0.78deg);
-          }
-          60% {
-            clip: rect(61px, 9999px, 65px, 0);
-            transform: skew(0.07deg);
-          }
-          65% {
-            clip: rect(9px, 9999px, 52px, 0);
-            transform: skew(0.51deg);
-          }
-          70% {
-            clip: rect(54px, 9999px, 8px, 0);
-            transform: skew(0.02deg);
-          }
-          75% {
-            clip: rect(3px, 9999px, 82px, 0);
-            transform: skew(0.65deg);
-          }
-          80% {
-            clip: rect(63px, 9999px, 82px, 0);
-            transform: skew(0.48deg);
-          }
-          85% {
-            clip: rect(35px, 9999px, 39px, 0);
-            transform: skew(0.57deg);
-          }
-          90% {
-            clip: rect(58px, 9999px, 84px, 0);
-            transform: skew(0.07deg);
-          }
-          95% {
-            clip: rect(39px, 9999px, 33px, 0);
-            transform: skew(0.51deg);
-          }
-          100% {
-            clip: rect(97px, 9999px, 100px, 0);
-            transform: skew(0.04deg);
-          }
-        }
-        @keyframes glitch-skew {
-          0% {
-            transform: skew(-0.5deg);
-          }
-          10% {
-            transform: skew(1deg);
-          }
-          20% {
-            transform: skew(-1.5deg);
-          }
-          30% {
-            transform: skew(0deg);
-          }
-          40% {
-            transform: skew(0.5deg);
-          }
-          50% {
-            transform: skew(-0.5deg);
-          }
-          60% {
-            transform: skew(1deg);
-          }
-          70% {
-            transform: skew(-1deg);
-          }
-          80% {
-            transform: skew(0.5deg);
-          }
-          90% {
-            transform: skew(-0.5deg);
-          }
-          100% {
-            transform: skew(0deg);
-          }
+        .retro-text {
+          text-shadow: 0.2rem 0.2rem 0.2rem rgba(233, 234, 227, 0.4);
+          animation: textflicker 0.5s infinite;
         }
         @keyframes fadeIn {
           from {
@@ -806,30 +617,35 @@ export default function Page() {
         /* Parallax Zoom Effect with direct response */
         .parallax-container {
           position: relative;
-          overflow: hidden;
+          overflow: visible;
           transition: none;
           perspective: 1000px;
           will-change: transform;
+          height: 100vh;
         }
         
         .monitor-zoom {
           transition: none;
-          transform-origin: center 30%;
+          transform-origin: center 25%;
           will-change: transform, opacity;
           backface-visibility: hidden;
+          height: 100%;
         }
         
         .monitor-content {
           transition: none;
-          transform-origin: center 30%;
+          transform-origin: center 25%;
           will-change: transform, opacity;
           backface-visibility: hidden;
+          height: 100%;
         }
         
         /* Improve performance with hardware acceleration */
         .hero-section, .hero-sticky, .monitor-3d-container {
           transform: translateZ(0);
           backface-visibility: hidden;
+          height: 100vh;
+          overflow: hidden;
         }
         
         .hero-section {
@@ -868,6 +684,7 @@ export default function Page() {
           will-change: opacity;
           position: relative;
           z-index: 20;
+          overflow: visible;
         }
         
         /* When fully zoomed, make sure content is visible */
@@ -881,6 +698,7 @@ export default function Page() {
           height: 0;
           margin: 0;
           padding: 0;
+          overflow: visible;
         }
         
         /* Services section adjustment */
@@ -889,6 +707,7 @@ export default function Page() {
           position: relative;
           z-index: 20;
           padding-top: 0;
+          overflow: visible;
         }
         
         body.content-visible .content-section {
@@ -948,6 +767,8 @@ export default function Page() {
         .monitor-3d-container {
           transform-style: preserve-3d;
           perspective: 1000px;
+          height: 100%;
+          overflow: hidden;
         }
         
         /* Retro screen scanlines that persist after zoom */
@@ -1036,10 +857,23 @@ export default function Page() {
         
         .animate-scroll {
           animation: scroll 30s linear infinite;
+          display: flex;
+          width: fit-content;
         }
         
         .animate-scroll:hover {
           animation-play-state: paused;
+        }
+
+        .companies-container {
+          width: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .companies-wrapper {
+          display: flex;
+          width: fit-content;
         }
 
         @keyframes pulse-subtle {
@@ -1059,8 +893,8 @@ export default function Page() {
       {/* Hero Section */}
       <section className={`hero-section overflow-visible bg-[#090A11] ${isFullyZoomed ? '-mt-16 h-0' : 'mt-4'}`} ref={heroSectionRef}>
         <div className={`hero-sticky ${isFullyZoomed ? 'zoomed-in' : ''}`}>
-          <div className="container relative z-10 mx-auto parallax-container overflow-visible" ref={containerRef}>
-            <div className="relative w-full max-w-[85vw] mx-auto monitor-3d-container overflow-visible">
+          <div className="container relative z-10 mx-auto parallax-container overflow-visible w-full" ref={containerRef}>
+            <div className="relative w-full mx-auto monitor-3d-container overflow-visible">
               <div 
                 className="relative pb-[75%] overflow-visible"
                 ref={monitorRef}
@@ -1068,36 +902,45 @@ export default function Page() {
                   transform: `scale(${0.85 + smoothScrollProgress * 10}) 
                               rotateX(${Math.min(smoothScrollProgress * 5, 1.5)}deg) 
                               rotateY(${Math.min(smoothScrollProgress * -3, -0.9)}deg)`,
-                  transformOrigin: 'center 30%',
-                  transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transformOrigin: 'center 25%',
+                  transition: typeof window !== 'undefined' && window.innerWidth > 768 
+                              ? 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)' 
+                              : 'none', // Apply transition only on desktop
                   opacity: isFullyZoomed ? 0 : 1,
-                  zIndex: 1
+                  zIndex: 1,
+                  overflow: 'visible'
                 }}
               >
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/retro-computer-kogzaHCxbKAUAcZwNi1Wts32MkhVaa.png"
+                src="/images/retro-computer.png?v=2"
                 alt="Retro Computer"
                 layout="fill"
                 objectFit="contain"
-                  className="absolute -top-4 left-0 w-full h-full z-20 monitor-zoom"
+                className="absolute -top-10% left-0 w-full h-full z-[100] monitor-zoom"
                   style={{ 
                     transform: smoothScrollProgress > 0.95 
                       ? `scale(${2 - smoothScrollProgress}) rotate(${(smoothScrollProgress - 0.95) * 100}deg)` 
-                      : `rotate(${smoothScrollProgress * 2}deg)`,
+                    : `rotate(${smoothScrollProgress * 2}deg) scale(${window.innerWidth <= 768 ? 2.5 : 1})`,
                     filter: `brightness(${1 - smoothScrollProgress * 0.3})`,
-                    transformOrigin: 'center 30%',
-                    opacity: smoothScrollProgress >= 0.65 ? (1 - (smoothScrollProgress - 0.65) * 3) : 1
+                    transformOrigin: 'center 25%',
+                    opacity: smoothScrollProgress >= 0.65 ? (1 - (smoothScrollProgress - 0.65) * 3) : 1,
+                    overflow: 'visible',
+                    position: 'absolute',
+                    zIndex: 100,
+                    top: window.innerWidth <= 768 ? '16%' : '-10%'
                   }}
                 />
                 <div 
-                  className="absolute top-[16%] left-[13.5%] right-[13.5%] bottom-[43.5%] flex flex-col items-center z-10"
+                  className="absolute top-[12%] left-[13.5%] right-[13.5%] bottom-[43.5%] flex flex-col items-center z-[90]"
                   style={{
                     transform: `scale(${1 + smoothScrollProgress * 0.5})`,
-                    transformOrigin: 'center 30%'
+                    transformOrigin: 'center 25%',
+                    top: window.innerWidth <= 768 ? '20%' : '-10%',
+                    overflow: 'visible'
                   }}
                 >
                   <div 
-                    className="w-full h-full bg-[#090A11] retro-screen flex flex-col items-center justify-between py-8 z-10 monitor-content relative"
+                    className="w-full h-full bg-[#090A11] retro-screen flex flex-col items-center justify-between pt-8 pb-4 z-10 monitor-content relative"
                     ref={screenContentRef}
                     style={{
                       transform: `translateZ(${smoothScrollProgress * 20}px)`,
@@ -1106,33 +949,24 @@ export default function Page() {
                       zIndex: 100
                     }}
                   >
-                    <div className="flex-1 flex items-center justify-center">
+                    <div className="flex-1 flex items-center justify-center flex-col">
                       <h1
-                        className="relative text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white tracking-tight retro-text text-center leading-tight glitch fade-in-out animate-fadeIn"
+                        className="relative text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-white tracking-tight retro-text text-center leading-tight glitch fade-in-out animate-fadeIn mb-6"
                         data-text="PERSONALIZED IT AND HARDWARE SOLUTIONS"
                         style={{
-                          opacity: 1 - smoothScrollProgress * 3 > 0 ? 1 - smoothScrollProgress * 3 : 0
+                          opacity: 1 - smoothScrollProgress * 3 > 0 ? 1 - smoothScrollProgress * 3 : 0,
+                          marginTop: "10px"
                         }}
                       >
                         PERSONALIZED IT AND
                         <br />
                         HARDWARE SOLUTIONS
                       </h1>
-                    </div>
-                    
-                    <div className="w-full flex flex-col items-center justify-end pb-8">
-                      <p className="text-sm text-gray-400 mb-2 animate-pulse-subtle" style={{
-                        opacity: 1 - smoothScrollProgress * 3 > 0 ? 1 - smoothScrollProgress * 3 : 0
+                      <p className="text-sm text-gray-400 animate-pulse-subtle mt-10" style={{
+                        opacity: 1 - smoothScrollProgress * 2 > 0 ? 1 - smoothScrollProgress * 2 : 0
                       }}>
                         Scroll to explore
                       </p>
-                      
-                      {/* Replace arrow with caret */}
-                      {!initialZoomComplete && !isFullyZoomed && (
-                        <div className="wheel-instruction">
-                          <div className="caret-icon">^</div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1182,11 +1016,11 @@ export default function Page() {
       {/* Services Section */}
       <section className="py-35 relative content-section">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left side - "SERVICES" title */}
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center md:justify-start md:pl-48">
               <FadeIn direction="right">
-                <h2 className="text-4xl font-bold text-[#e9eae3]">
+                <h2 className="text-3xl md:text-4xl font-bold text-[#e9eae3] text-center md:text-left">
                   SERVICES
                 </h2>
               </FadeIn>
@@ -1199,21 +1033,21 @@ export default function Page() {
                   <div className="border border-[#e9eae3] rounded-lg overflow-hidden">
                     <button
                       onClick={() => setOpenService(openService === service.title ? null : service.title)}
-                      className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-[#1F1F20]/10 transition-colors"
+                      className="w-full px-4 md:px-6 py-3 md:py-4 text-left flex justify-between items-center hover:bg-[#1F1F20]/10 transition-colors"
                     >
-                      <h3 className="text-2xl font-bold text-[#e9eae3]">
+                      <h3 className="text-xl md:text-2xl font-bold text-[#e9eae3] pr-4">
                         {service.title}
                       </h3>
-                      <span className="text-[#e9eae3] text-2xl">
+                      <span className="text-[#e9eae3] text-xl md:text-2xl flex-shrink-0">
                         {openService === service.title ? '−' : '+'}
                       </span>
                     </button>
                     
                     {openService === service.title && (
-                      <div className="px-6 pb-4">
+                      <div className="px-4 md:px-6 pb-3 md:pb-4">
                         <ul className="space-y-2">
                           {service.items.map((item, itemIndex) => (
-                            <li key={itemIndex} className="text-[#9CA3AF] text-sm">
+                            <li key={itemIndex} className="text-[#9CA3AF] text-sm md:text-base">
                               {item}
                             </li>
                           ))}
@@ -1243,30 +1077,30 @@ export default function Page() {
           </div>
           
           <Parallax offset={30}>
-            <div className="relative w-full overflow-hidden">
-              <div className="flex animate-scroll">
+            <div className="companies-container">
+              <div className="companies-wrapper animate-scroll">
                 {/* First set of logos */}
                 <div className="flex space-x-8 items-center">
                   {[
                     {
                       name: "Lanco-Pennland Quality Milk Producers",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lanco-pennland-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/lanco_pennland.avif"
                     },
                     {
                       name: "D.M Bowman Inc",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dm-bowman-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/dm-bowman.png"
                     },
                     {
                       name: "iSmile Dental Care",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ismile-dental-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/ismile-dental.png"
                     },
                     {
                       name: "Southern Fulton School District",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/southern-fulton-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/southern-fulton.png"
                     },
                     {
                       name: "Classic Cabinets Kitchen and Bath",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/classic-cabinets-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/classic-cabinets.svg"
                     }
                   ].map((company, index) => (
                     <FadeIn key={index} delay={index * 0.1}>
@@ -1277,7 +1111,11 @@ export default function Page() {
                           src={company.logo}
                           alt={company.name}
                           fill
-                          className="object-contain p-4 grayscale hover:grayscale-0 transition-all duration-300"
+                          className={`object-contain p-4 transition-all duration-300 ${
+                            company.name === "Classic Cabinets Kitchen and Bath" 
+                              ? "brightness-0 invert" 
+                              : "grayscale hover:grayscale-0"
+                          }`}
                         />
                       </div>
                     </FadeIn>
@@ -1289,23 +1127,23 @@ export default function Page() {
                   {[
                     {
                       name: "Lanco-Pennland Quality Milk Producers",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lanco-pennland-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/lanco_pennland.avif"
                     },
                     {
                       name: "D.M Bowman Inc",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dm-bowman-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/dm-bowman.png"
                     },
                     {
                       name: "iSmile Dental Care",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ismile-dental-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/ismile-dental.png"
                     },
                     {
                       name: "Southern Fulton School District",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/southern-fulton-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/southern-fulton.png"
                     },
                     {
                       name: "Classic Cabinets Kitchen and Bath",
-                      logo: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/classic-cabinets-logo-8f9f9f9f8f9f9f9f8f9f9f9f8f9f9f9f.png"
+                      logo: "/images/company-logos/classic-cabinets.svg"
                     }
                   ].map((company, index) => (
                     <FadeIn key={index} delay={index * 0.1}>
@@ -1316,7 +1154,11 @@ export default function Page() {
                           src={company.logo}
                           alt={company.name}
                           fill
-                          className="object-contain p-4 grayscale hover:grayscale-0 transition-all duration-300"
+                          className={`object-contain p-4 transition-all duration-300 ${
+                            company.name === "Classic Cabinets Kitchen and Bath" 
+                              ? "brightness-0 invert" 
+                              : "grayscale hover:grayscale-0"
+                          }`}
                         />
                       </div>
                     </FadeIn>
@@ -1341,9 +1183,9 @@ export default function Page() {
               </h2>
             </FadeIn>
             
-            <div className="space-y-6">
-              {/* FAQ Item 1 */}
-              <FadeIn delay={0.1}>
+            <FadeIn>
+              <div className="space-y-6">
+                {/* FAQ Item 1 */}
                 <div className={`faq-item border border-gray-800 rounded-lg overflow-hidden bg-[#0F1015] hover:border-blue-500/30 transition-all duration-300 ${openFaq === 1 ? 'active' : ''}`}>
                   <button
                     className="w-full px-6 py-4 text-left flex justify-between items-center"
@@ -1362,10 +1204,8 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
-              </FadeIn>
-              
-              {/* FAQ Item 2 */}
-              <FadeIn delay={0.2}>
+                
+                {/* FAQ Item 2 */}
                 <div className={`faq-item border border-gray-800 rounded-lg overflow-hidden bg-[#0F1015] hover:border-blue-500/30 transition-all duration-300 ${openFaq === 2 ? 'active' : ''}`}>
                   <button
                     className="w-full px-6 py-4 text-left flex justify-between items-center"
@@ -1380,14 +1220,12 @@ export default function Page() {
                   </button>
                   <div className={`faq-content px-6 ${openFaq === 2 ? 'open' : ''}`}>
                     <p className="text-gray-400">
-                      Our 24/7 support team is always ready to respond to emergencies. For managed service clients, we guarantee response times as quick as 15 minutes for critical issues, with most problems resolved remotely within the first hour of contact.
+                      For managed service clients, we provide priority support during business hours with rapid response times. Our team is committed to addressing critical issues promptly, with most problems resolved remotely within the first hour of contact.
                     </p>
                   </div>
                 </div>
-              </FadeIn>
-              
-              {/* FAQ Item 3 */}
-              <FadeIn delay={0.3}>
+                
+                {/* FAQ Item 3 */}
                 <div className={`faq-item border border-gray-800 rounded-lg overflow-hidden bg-[#0F1015] hover:border-blue-500/30 transition-all duration-300 ${openFaq === 3 ? 'active' : ''}`}>
                   <button
                     className="w-full px-6 py-4 text-left flex justify-between items-center"
@@ -1406,10 +1244,8 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
-              </FadeIn>
-              
-              {/* FAQ Item 4 */}
-              <FadeIn delay={0.4}>
+                
+                {/* FAQ Item 4 */}
                 <div className={`faq-item border border-gray-800 rounded-lg overflow-hidden bg-[#0F1015] hover:border-blue-500/30 transition-all duration-300 ${openFaq === 4 ? 'active' : ''}`}>
                   <button
                     className="w-full px-6 py-4 text-left flex justify-between items-center"
@@ -1428,10 +1264,8 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
-              </FadeIn>
-              
-              {/* FAQ Item 5 */}
-              <FadeIn delay={0.5}>
+                
+                {/* FAQ Item 5 */}
                 <div className={`faq-item border border-gray-800 rounded-lg overflow-hidden bg-[#0F1015] hover:border-blue-500/30 transition-all duration-300 ${openFaq === 5 ? 'active' : ''}`}>
                   <button
                     className="w-full px-6 py-4 text-left flex justify-between items-center"
@@ -1450,27 +1284,14 @@ export default function Page() {
                     </p>
                   </div>
                 </div>
-              </FadeIn>
-            </div>
-            
-            <div className="text-center mt-12">
-              <Link
-                href="/faq"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation('/faq');
-                }}
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors duration-300"
-              >
-                View All FAQs
-              </Link>
-            </div>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
 
       {/* Contact Us Section */}
-      <section className="py-35 relative overflow-hidden bg-[#0F1015] pb-16">
+      <section className="py-35 pt-24 relative overflow-hidden bg-[#0F1015] pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <FadeIn>
@@ -1481,7 +1302,7 @@ export default function Page() {
                 </span>
               </h2>
             </FadeIn>
-            <FadeIn delay={0.2}>
+            <FadeIn delay={0.1}>
               <p className="text-[#e9eae3] text-xl mb-12">
                 Ready to transform your IT infrastructure? Our experts are here to help.
               </p>
@@ -1518,25 +1339,41 @@ export default function Page() {
               {/* Quick Contact Form */}
               <FadeIn delay={0.6} direction="left">
                 <div className="bg-[#090A11] p-8 rounded-lg border border-gray-800 hover:border-blue-500/30 transition-all duration-300">
-                  <form className="space-y-6">
+                  <form 
+                    action="https://formsubmit.co/contact@digitaldsi.com"
+                    method="POST"
+                    className="space-y-6"
+                  >
+                    <input type="hidden" name="_subject" value="New Contact Form Submission" />
+                    <input type="hidden" name="_template" value="table" />
+                    <input type="hidden" name="_autoresponse" value="Thank you for contacting Digital DSI. We will get back to you shortly!" />
+                    <input type="hidden" name="_honey" style={{display: 'none'}} />
+                    <input type="hidden" name="_captcha" value="true" />
+                    <input type="hidden" name="_next" value="https://digitaldsi.com/thank-you" />
                     <div>
                       <input
                         type="text"
+                        name="name"
                         placeholder="Your Name"
+                        required
                         className="w-full px-4 py-3 bg-[#1A1B23] border border-gray-800 rounded-lg text-[#e9eae3] placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-colors"
                       />
                     </div>
                     <div>
                       <input
                         type="email"
+                        name="email"
                         placeholder="Your Email"
+                        required
                         className="w-full px-4 py-3 bg-[#1A1B23] border border-gray-800 rounded-lg text-[#e9eae3] placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-colors"
                       />
                     </div>
                     <div>
                       <textarea
+                        name="message"
                         placeholder="Your Message"
                         rows={4}
+                        required
                         className="w-full px-4 py-3 bg-[#1A1B23] border border-gray-800 rounded-lg text-[#e9eae3] placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-colors resize-none"
                       ></textarea>
                     </div>
@@ -1549,21 +1386,6 @@ export default function Page() {
                   </form>
                 </div>
               </FadeIn>
-            </div>
-            
-            {/* Additional CTA */}
-            <div className="inline-flex items-center space-x-2 text-[#e9eae3]">
-              <span className="text-lg">Need immediate assistance?</span>
-              <Link
-                href="/emergency"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation('/emergency');
-                }}
-                className="text-lg text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                Contact emergency support →
-              </Link>
             </div>
           </div>
         </div>

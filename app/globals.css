@@ -6,6 +6,7 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: #090A11;
+  position: relative; /* Ensure position context for fixed elements */
 }
 
 body {
@@ -16,6 +17,115 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Chatbot fixes */
+#kGpr8iRd3qBadHmgU4Zlh, 
+.chatbase-iframe, 
+.chatbot-container {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important;
+  max-height: 80vh !important;
+}
+
+/* Ensure chatbot is above all other content on home page */
+.hero-section, 
+.hero-sticky, 
+.parallax-container,
+.monitor-3d-container {
+  z-index: auto !important;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 100vh;
+  }
+
+  .hero-sticky {
+    height: 100vh;
+  }
+
+  .monitor-3d-container {
+    transform: scale(0.8) !important;
+    transform-origin: center top !important;
+  }
+
+  .screen-content {
+    padding: 1rem !important;
+  }
+
+  .retro-text {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  .service-card {
+    padding: 1rem !important;
+  }
+
+  .service-title {
+    font-size: 1.25rem !important;
+  }
+
+  .service-items {
+    font-size: 0.9rem !important;
+  }
+
+  .scroll-text {
+    font-size: 0.875rem !important;
+    bottom: 1rem !important;
+  }
+
+  .nav-links {
+    display: none !important;
+  }
+
+  .mobile-menu {
+    display: block !important;
+  }
+
+  .companies-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .company-logo {
+    width: 100% !important;
+    height: 80px !important;
+  }
+
+  .faq-item {
+    margin-bottom: 1rem !important;
+  }
+
+  .faq-title {
+    font-size: 1.1rem !important;
+  }
+
+  .faq-content {
+    font-size: 0.9rem !important;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .mobile-menu {
+    display: none !important;
   }
 }
 

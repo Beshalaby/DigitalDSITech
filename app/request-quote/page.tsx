@@ -12,14 +12,8 @@ export default function RequestQuotePage() {
     phone: "",
     company: "",
     message: "",
-    productType: "printer"
+    issueType: ""
   })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission here
-    console.log(formData)
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -27,6 +21,13 @@ export default function RequestQuotePage() {
       ...prev,
       [name]: value
     }))
+  }
+
+  const getFormAction = () => {
+    if (!formData.issueType) return ""
+    return formData.issueType === "copiers-printers" 
+      ? "https://formsubmit.co/service@digitaldsi.com"
+      : "https://formsubmit.co/help@techteammail.com"
   }
 
   return (
@@ -55,7 +56,17 @@ export default function RequestQuotePage() {
       <section className="py-24 relative">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form 
+              action={getFormAction()}
+              method="POST"
+              className="space-y-8"
+            >
+              <input type="hidden" name="_subject" value="New Quote Request" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_autoresponse" value="Thank you for your quote request. We will get back to you shortly!" />
+              <input type="text" name="_honey" style={{display: 'none'}} />
+              <input type="hidden" name="_captcha" value="true" />
+              <input type="hidden" name="_next" value="https://digitaldsi.com/thank-you" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-[#e9eae3] block text-sm font-medium">
@@ -123,24 +134,6 @@ export default function RequestQuotePage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="productType" className="text-[#e9eae3] block text-sm font-medium">
-                  Product Type
-                </label>
-                <select
-                  id="productType"
-                  name="productType"
-                  value={formData.productType}
-                  onChange={handleChange}
-                  className="w-full bg-[#1A1B23] border border-gray-800 rounded-md px-3 py-2 text-[#e9eae3] focus:outline-none focus:border-blue-500"
-                >
-                  <option value="printer">Printer</option>
-                  <option value="copier">Copier</option>
-                  <option value="scanner">Scanner</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
                 <label htmlFor="message" className="text-[#e9eae3] block text-sm font-medium">
                   Message
                 </label>
@@ -153,6 +146,24 @@ export default function RequestQuotePage() {
                   className="bg-[#1A1B23] border-gray-800 text-[#e9eae3] focus:border-blue-500 min-h-[150px]"
                   placeholder="Tell us about your printing needs..."
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="issueType" className="text-[#e9eae3] block text-sm font-medium">
+                  Issue Type
+                </label>
+                <select
+                  id="issueType"
+                  name="issueType"
+                  value={formData.issueType}
+                  onChange={handleChange}
+                  className="w-full bg-[#1A1B23] border border-gray-800 rounded-md px-3 py-2 text-[#e9eae3] focus:outline-none focus:border-blue-500"
+                  required
+                >
+                  <option value="" disabled>Select</option>
+                  <option value="copiers-printers">Copiers/Printers</option>
+                  <option value="it-issue">IT Issue</option>
+                </select>
               </div>
 
               <Button 
