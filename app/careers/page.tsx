@@ -4,33 +4,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { JobApplicationModal } from "@/components/job-application-modal"
-
-const jobPositions = [
-  {
-    title: "Technical Support Specialist",
-    department: "Support",
-    location: "Remote / Hybrid",
-    description: "Provide expert technical support and maintenance services for our printing solutions.",
-    requirements: [
-      "2+ years of technical support experience",
-      "Strong problem-solving skills",
-      "Excellent communication abilities",
-      "Knowledge of printing systems"
-    ]
-  },
-  {
-    title: "Sales Representative",
-    department: "Sales",
-    location: "Remote / Hybrid",
-    description: "Drive sales growth by identifying and developing new business opportunities.",
-    requirements: [
-      "3+ years of sales experience",
-      "Proven track record of meeting targets",
-      "Strong negotiation skills",
-      "Business development expertise"
-    ]
-  }
-]
+// Import job positions from data file
+import { jobPositions } from "./data";
 
 export default function CareersPage() {
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null)

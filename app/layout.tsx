@@ -4,10 +4,12 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import "./globals.css"
 import { Chatbot } from "./components/chatbot"
+import type { Metadata } from 'next'
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Digital DSI - Document & IT Solutions",
   description: "Professional document and IT solutions for businesses",
   generator: 'v0.dev'

@@ -43,7 +43,7 @@ export function SiteHeader() {
         {/* Desktop Navigation */}
         <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:flex items-center gap-6">
           <Link 
-            href="/?skipIntro=true" 
+            href="/"
             className="text-sm font-medium text-white/90 hover:text-white transition-colors"
           >
             HOME
@@ -129,7 +129,7 @@ export function SiteHeader() {
         <div className="flex flex-col h-full p-6 overflow-y-auto">
           <div className="flex-1 space-y-6">
             <Link 
-              href="/?skipIntro=true" 
+              href="/"
               className="block text-sm font-medium text-white/90 hover:text-white transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >

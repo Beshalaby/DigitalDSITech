@@ -8,16 +8,18 @@ interface FadeInProps {
   delay?: number;
   className?: string;
   direction?: 'up' | 'down' | 'left' | 'right';
+  amount?: number;
 }
 
 export function FadeIn({ 
   children, 
   delay = 0, 
   className = '', 
-  direction = 'up' 
+  direction = 'up',
+  amount = 0.1 
 }: FadeInProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, amount: amount });
 
   const variants = {
     hidden: {
