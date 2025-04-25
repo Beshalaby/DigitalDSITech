@@ -53,17 +53,17 @@ const printerCategories = [
     options: [
       {
         title: "bizhub 5020i",
-        image: "/images/konica printers/single_function/bizhub-5020i-525x450.png",
+        image: "/static/konica-printers/single_function/bizhub-5020i-525x450.png",
         description: "High-speed monochrome printer with advanced security features and network capabilities."
       },
       {
         title: "bizhub 5000i",
-        image: "/images/konica printers/single_function/bizhub_5000i_525x450.png",
+        image: "/static/konica-printers/single_function/bizhub_5000i_525x450.png",
         description: "Reliable monochrome printer offering exceptional print quality and cost efficiency."
       },
       {
         title: "bizhub 4000i",
-        image: "/images/konica printers/single_function/bizhub_4000i_525x450.png",
+        image: "/static/konica-printers/single_function/bizhub_4000i_525x450.png",
         description: "Compact and efficient monochrome printer ideal for small office environments."
       }
     ]
@@ -84,17 +84,17 @@ const printerCategories = [
     options: [
       {
         title: "KIP 900 Series",
-        image: "/images/konica printers/kip/KIP-900 Series.png",
+        image: "/static/konica-printers/kip/KIP-900 Series.png",
         description: "High-performance wide format printer series offering exceptional print quality and versatility for large format applications."
       },
       {
         title: "KIP 790",
-        image: "/images/konica printers/kip/KIP-790.png",
+        image: "/static/konica-printers/kip/KIP-790.png",
         description: "Advanced wide format printer with superior color accuracy and high-speed printing capabilities."
       },
       {
         title: "KIP 7572G-10D",
-        image: "/images/konica printers/kip/KIP-7572G-10D.png",
+        image: "/static/konica-printers/kip/KIP-7572G-10D.png",
         description: "Professional-grade wide format printer designed for high-volume production and precise color reproduction."
       }
     ]

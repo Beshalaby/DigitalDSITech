@@ -12,7 +12,11 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Digital DSI - Document & IT Solutions",
   description: "Professional document and IT solutions for businesses",
-  generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/static/DocumentSolutions.png',
+    apple: '/static/DocumentSolutions.png'
+  }
 }
 
 export default function RootLayout({
@@ -22,6 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/static/DocumentSolutions.png" />
+      </head>
       <body className={`${inter.className} bg-[#090A11] min-h-screen`}>
         <SiteHeader />
         <main>{children}</main>
