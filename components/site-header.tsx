@@ -5,10 +5,17 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
+import { usePathname } from 'next/navigation'
 
 export function SiteHeader() {
   const [isSolutionsOpen, setIsSolutionsOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Determine the correct image path based on the route
+  const imageSrc = pathname === '/' 
+    ? './images/dsi-logo-horizontal.png' 
+    : '../images/dsi-logo-horizontal.png';
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -32,7 +39,7 @@ export function SiteHeader() {
       <div className="container flex h-14 items-center justify-between relative">
         <Link href="/" className="flex-shrink-0 relative z-[101]">
           <Image
-            src="../images/dsi-logo-horizontal.png"
+            src={imageSrc}
             alt="Digital DSI Logo"
             width={180}
             height={40}
