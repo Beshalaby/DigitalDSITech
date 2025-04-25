@@ -67,23 +67,23 @@ const services = [
 const partners = [
   {
     name: "Lanco-Pennland Quality Milk Producers",
-    logo: "./images/company-logos/lanco_pennland.avif"
+    logo: "/static/lanco_pennland.avif"
   },
   {
     name: "D.M Bowman Inc",
-    logo: "./images/company-logos/dm-bowman.png"
+    logo: "/static/dm-bowman.png"
   },
   {
     name: "iSmile Dental Care",
-    logo: "./images/company-logos/ismile-dental.png"
+    logo: "/static/ismile-dental.png"
   },
   {
     name: "Southern Fulton School District",
-    logo: "./images/company-logos/southern-fulton.png"
+    logo: "/static/southern-fulton.png"
   },
   {
     name: "Classic Cabinets Kitchen and Bath",
-    logo: "./images/company-logos/classic-cabinets.svg"
+    logo: "/static/classic-cabinets.svg"
   }
 ];
 

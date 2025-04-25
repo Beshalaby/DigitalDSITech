@@ -15,7 +15,7 @@ export default function TechTeamSolutions() {
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center justify-center mb-16">
               <Image
-                src="./images/tts-logo-WHITE.png"
+                src="/static/tts-logo-WHITE.png"
                 alt="TechTeam Solutions Logo"
                 width={600}
                 height={150}

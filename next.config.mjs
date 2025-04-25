@@ -26,6 +26,20 @@ const nextConfig = {
   assetPrefix: process.env.NODE_ENV === 'production' ? '/DigitalDSITech/' : '',
   basePath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
   trailingSlash: true,
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(png|jpg|gif|svg|avif)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          publicPath: '/DigitalDSITech/',
+          outputPath: 'static/',
+          name: '[name].[ext]',
+        },
+      },
+    });
+    return config;
+  },
 }
 
 mergeConfig(nextConfig, userConfig)

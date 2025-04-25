@@ -22,17 +22,17 @@ const printerCategories = [
     options: [
       {
         title: "bizhub C650i",
-        image: "/images/konica printers/multifunction/bizhub_C650i_Right.png",
+        image: "/static/konica-printers/multifunction/bizhub_C650i_Right.png",
         description: "High-performance color multifunction printer with advanced security features and cloud integration capabilities."
       },
       {
         title: "bizhub C550i",
-        image: "/images/konica printers/multifunction/bizhub_C550i_Right.png",
+        image: "/static/konica-printers/multifunction/bizhub_C550i_Right.png",
         description: "Versatile color multifunction printer offering exceptional print quality and efficient workflow solutions."
       },
       {
         title: "bizhub 4020i",
-        image: "/images/konica printers/multifunction/bizhub_4020i_525x450.png",
+        image: "/static/konica-printers/multifunction/bizhub_4020i_525x450.png",
         description: "Compact and efficient monochrome multifunction printer perfect for small to medium workgroups."
       }
     ]
