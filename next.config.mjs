@@ -23,8 +23,8 @@ let userConfig = undefined
      parallelServerCompiles: true,
    },
    output: 'export',
-   assetPrefix: process.env.NODE_ENV === 'production' ? '/DigitalDSITech/' : '',
-   basePath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
+   assetPrefix: '',
+   basePath: '',
    trailingSlash: true,
    webpack: (config) => {
      config.module.rules.push({

@@ -32,7 +32,7 @@ export function SiteHeader() {
       <div className="container flex h-14 items-center justify-between relative">
         <Link href="/" className="flex-shrink-0 relative z-[101]">
           <Image
-            src="./images/dsi-logo-horizontal.png"
+            src="/images/dsi-logo-horizontal.png"
             alt="Digital DSI Logo"
             width={180}
             height={40}
