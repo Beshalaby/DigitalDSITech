@@ -32,9 +32,9 @@ let userConfig = undefined
        use: {
          loader: 'file-loader',
          options: {
-           publicPath: '/DigitalDSITech/',
-           outputPath: 'static/',
-           name: '[name].[ext]',
+           publicPath: '/',
+           outputPath: 'images/',
+           name: '[path][name].[ext]',
          },
        },
      });
