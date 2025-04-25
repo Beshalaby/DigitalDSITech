@@ -15,13 +15,17 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    domains: ['raw.githubusercontent.com'],
   },
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-  output: 'export'
+  output: 'export',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/DigitalDSITech/' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
+  trailingSlash: true,
 }
 
 mergeConfig(nextConfig, userConfig)
