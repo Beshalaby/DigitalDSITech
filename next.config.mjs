@@ -27,17 +27,6 @@ let userConfig = undefined
    basePath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
    trailingSlash: true,
    webpack: (config) => {
-     config.module.rules.push({
-       test: /\.(png|jpg|gif|svg|avif)$/,
-       use: {
-         loader: 'file-loader',
-         options: {
-           publicPath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
-           outputPath: 'images/',
-           name: '[path][name].[ext]',
-         },
-       },
-     });
      return config;
    },
  }
