@@ -13,7 +13,9 @@ export function SiteHeader() {
   const pathname = usePathname()
 
   // Determine the correct image path based on the route
-  const imageSrc = pathname === '/' 
+  // Check for both '/' and potential trailing slash for home
+  const isHomePage = pathname === '/' || pathname === ''; 
+  const imageSrc = isHomePage 
     ? './images/dsi-logo-horizontal.png' 
     : '../images/dsi-logo-horizontal.png';
 
