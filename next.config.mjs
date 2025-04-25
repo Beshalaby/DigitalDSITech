@@ -23,8 +23,8 @@ let userConfig = undefined
      parallelServerCompiles: true,
    },
    output: 'export',
-   assetPrefix: '',
-   basePath: '',
+   assetPrefix: process.env.NODE_ENV === 'production' ? '/DigitalDSITech/' : '',
+   basePath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
    trailingSlash: true,
    webpack: (config) => {
      config.module.rules.push({
@@ -32,7 +32,7 @@ let userConfig = undefined
        use: {
          loader: 'file-loader',
          options: {
-           publicPath: '/',
+           publicPath: process.env.NODE_ENV === 'production' ? '/DigitalDSITech' : '',
            outputPath: 'images/',
            name: '[path][name].[ext]',
          },
