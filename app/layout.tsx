@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   description: "Professional document and IT solutions for businesses",
   generator: 'v0.dev',
   icons: {
-    icon: '/images/DocumentSolutions.png', // Standard favicon
-    apple: '/images/DocumentSolutions.png', // Apple touch icon
+    icon: '../images/DocumentSolutions.png', // Standard favicon
+    apple: '../images/DocumentSolutions.png', // Apple touch icon
   },
 }
 
