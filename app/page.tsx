@@ -83,7 +83,7 @@ const partners = [
   },
   {
     name: "Beachley",
-    logo: "/images/company-logos/beachley.png"
+    logo: "./images/company-logos/beachley.png"
   }
 ];
 
