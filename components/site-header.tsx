@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation'
 export function SiteHeader() {
   const [isSolutionsOpen, setIsSolutionsOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
 
   // Determine the correct image path based on the route
@@ -34,9 +35,28 @@ export function SiteHeader() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // Handle scroll event
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial check in case the page loads already scrolled
+    handleScroll(); 
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <header 
-      className="sticky top-0 z-[100] w-full bg-transparent"
+      className={`sticky top-0 z-[100] w-full transition-colors duration-300 ${
+        isScrolled 
+          ? 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60' 
+          : 'bg-transparent'
+      }`}
     >
       <div className="container flex h-14 items-center justify-between relative">
         <Link href="/" className="flex-shrink-0 relative z-[101]">

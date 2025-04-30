@@ -12,7 +12,11 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Digital DSI - Document & IT Solutions",
   description: "Professional document and IT solutions for businesses",
-  generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/images/DocumentSolutions.png', // Standard favicon
+    apple: '/images/DocumentSolutions.png', // Apple touch icon
+  },
 }
 
 export default function RootLayout({

@@ -82,8 +82,8 @@ const partners = [
     logo: "./images/company-logos/southern-fulton.png"
   },
   {
-    name: "Classic Cabinets Kitchen and Bath",
-    logo: "./images/company-logos/classic-cabinets.svg"
+    name: "Beachley",
+    logo: "/images/company-logos/beachley.png"
   }
 ];
 
@@ -113,6 +113,7 @@ const faqs = [
 export default function Page() {
   const [openService, setOpenService] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  // TEST COMMENT
 
   // Scroll handler function
   const handleScrollToServices = () => {
@@ -328,17 +329,13 @@ export default function Page() {
                     {partners.map((company, index) => (
                       <FadeIn key={index} delay={index * 0.1}>
                         <div 
-                          className={`w-[200px] h-[100px] relative bg-gray-800/30 rounded-lg p-4 flex items-center justify-center hover:bg-gray-800/50 transition-all duration-300 ${company.name === "Classic Cabinets Kitchen and Bath" ? "mr-4" : ""} ${index === 0 && company.name === "Lanco-Pennland Quality Milk Producers" ? "ml-8" : ""}`}
+                          className={`w-[200px] h-[100px] relative bg-gray-800/30 rounded-lg p-4 flex items-center justify-center hover:bg-gray-800/50 transition-all duration-300 ${index === 0 && company.name === "Lanco-Pennland Quality Milk Producers" ? "ml-8" : ""}`}
                         >
                           <Image
                             src={company.logo}
                             alt={company.name}
                             fill
-                            className={`object-contain p-4 transition-all duration-300 ${
-                              company.name === "Classic Cabinets Kitchen and Bath" 
-                                ? "brightness-0 invert" 
-                                : "grayscale hover:grayscale-0"
-                            }`}
+                            className={`object-contain p-4 transition-all duration-300 grayscale hover:grayscale-0`}
                           />
                         </div>
                       </FadeIn>
@@ -349,17 +346,13 @@ export default function Page() {
                     {partners.map((company, index) => (
                       <FadeIn key={`dup-${index}`} delay={index * 0.1}>
                         <div 
-                          className={`w-[200px] h-[100px] relative bg-gray-800/30 rounded-lg p-4 flex items-center justify-center hover:bg-gray-800/50 transition-all duration-300 ${company.name === "Classic Cabinets Kitchen and Bath" ? "mr-4" : ""} ${index === 0 && company.name === "Lanco-Pennland Quality Milk Producers" ? "ml-8" : ""}`}
+                          className={`w-[200px] h-[100px] relative bg-gray-800/30 rounded-lg p-4 flex items-center justify-center hover:bg-gray-800/50 transition-all duration-300 ${index === 0 && company.name === "Lanco-Pennland Quality Milk Producers" ? "ml-8" : ""}`}
                         >
                           <Image
                             src={company.logo}
                             alt={company.name}
                             fill
-                            className={`object-contain p-4 transition-all duration-300 ${
-                              company.name === "Classic Cabinets Kitchen and Bath" 
-                                ? "brightness-0 invert" 
-                                : "grayscale hover:grayscale-0"
-                            }`}
+                            className={`object-contain p-4 transition-all duration-300 grayscale hover:grayscale-0`}
                           />
                         </div>
                       </FadeIn>

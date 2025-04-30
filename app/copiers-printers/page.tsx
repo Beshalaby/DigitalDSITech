@@ -84,7 +84,7 @@ const printerCategories = [
     options: [
       {
         title: "KIP 900 Series",
-        image: "../images/konica printers/kip/KIP-900-Series.png",
+        image: "../images/konica printers/kip/KIP-900 Series.png",
         description: "High-performance wide format printer series offering exceptional print quality and versatility for large format applications."
       },
       {
